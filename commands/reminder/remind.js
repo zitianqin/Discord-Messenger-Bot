@@ -1,9 +1,15 @@
+const path = require('node:path');
 const { SlashCommandBuilder } = require('discord.js');
+const { getData, setData } = require('../../dataStore.js');
 
 // A function that takes an array as an argument and returns a random element within the array.
 function randomElement(array) {
   var randomIndex = Math.floor(Math.random() * array.length);
   return array[randomIndex];
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36);
 }
 
 // Arrays for randomising and creating variation within the messages.
@@ -78,14 +84,28 @@ module.exports = {
     // Tell the user the date and time the bot will remind them at.
     await interaction.reply(`${randomElement(okayArray)} ${interaction.user.toString()}, I will remind you to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`);
 
-    // Schedule the reminder message
-    // Calculate the delay in milliseconds
-    const delay = (unixReminderTime - unixTime) * 1000;
+    // Insert data into the dataStore
+    let data = getData();
+    let reminders = data.reminders;
+    let newItem = {id: uid(), channel: interaction.channel, user: interaction.user.toString(), reminder: reminder, unixReminderTime: unixReminderTime};
+    
+    let index = 0;
+    while (index < reminders.length && reminders[index].unixReminderTime < newItem.unixReminderTime) {
+      index++;
+    }
+    
+    reminders.splice(index, 0, newItem);
+    setData(data);
 
-    // Set a timeout function to send the reminder message after the delay
-    setTimeout(() => {
-      // Send the reminder message to the same channel and tag the user
-      interaction.channel.send(`${interaction.user.toString()}, this is your reminder to ${reminder}!`);
-    }, delay);
+    // The below code is no longer used.
+    // // Schedule the reminder message
+    // // Calculate the delay in milliseconds
+    // const delay = (unixReminderTime - unixTime) * 1000;
+
+    // // // Set a timeout function to send the reminder message after the delay
+    // // setTimeout(() => {
+    // //   // Send the reminder message to the same channel and tag the user
+    // //   interaction.channel.send(`${interaction.user.toString()}, this is your reminder to ${reminder}!`);
+    // // }, delay);
   },
 };
