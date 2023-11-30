@@ -95,16 +95,5 @@ module.exports = {
     
     reminders.splice(index, 0, newItem);
     setData(data);
-
-    // The below code is no longer used.
-    // // Schedule the reminder message
-    // // Calculate the delay in milliseconds
-    // const delay = (unixReminderTime - unixTime) * 1000;
-
-    // // // Set a timeout function to send the reminder message after the delay
-    // // setTimeout(() => {
-    // //   // Send the reminder message to the same channel and tag the user
-    // //   interaction.channel.send(`${interaction.user.toString()}, this is your reminder to ${reminder}!`);
-    // // }, delay);
   },
 };
