@@ -1,4 +1,3 @@
-const path = require('node:path');
 const { SlashCommandBuilder } = require('discord.js');
 const { getData } = require('../../dataStore.js');
 
@@ -11,7 +10,7 @@ module.exports = {
     const reminders = getData().reminders;
     const userString = interaction.user.toString();
     const reminderList = [];
-    
+
     for (const reminder of reminders) {
       if (reminder.user === userString) {
         reminderList.push(reminder);

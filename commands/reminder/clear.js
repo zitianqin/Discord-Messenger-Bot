@@ -1,4 +1,3 @@
-const path = require('node:path');
 const { SlashCommandBuilder } = require('discord.js');
 const { getData, setData } = require('../../dataStore.js');
 
