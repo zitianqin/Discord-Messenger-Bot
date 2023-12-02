@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { getData, setData } = require('../../dataStore.js');
+const { getReminderListInfo } = require('../../helperFunctions.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -22,7 +23,7 @@ module.exports = {
     if (removedReminders.length === 0) {
       await interaction.reply(`You didn't have any reminders to delete!`);
     } else {
-      await interaction.reply(`This is a list of your deleted reminders:\n\n${removedReminders.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + `<@${reminder.remindee.id}>` + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`);
+      await interaction.reply(`This is a list of your deleted reminders:\n\n${getReminderListInfo(removedReminders)}`);
     }
   },
 };

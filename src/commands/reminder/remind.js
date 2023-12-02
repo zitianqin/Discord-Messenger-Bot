@@ -1,15 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { getData, setData } = require('../../dataStore.js');
-
-// A function that takes an array as an argument and returns a random element within the array.
-function randomElement(array) {
-  var randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
-}
-
-function uid() {
-  return Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36);
-}
+const { randomElement, uid } = require('../../helperFunctions.js');
 
 // Arrays for randomising and creating variation within the messages.
 const okayArray = ['Okey dokey', 'Aye aye, captain', 'Sure thing', 'Absofruitly', 'okie'];

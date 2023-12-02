@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { getData } = require('../../dataStore.js');
+const { getReminderListInfo } = require('../../helperFunctions.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -20,7 +21,7 @@ module.exports = {
     if (reminderList.length === 0) {
       await interaction.reply(`You don't have any upcoming reminders!`);
     } else {
-      await interaction.reply(`This is a list of your upcoming reminders:\n\n${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + `<@${reminder.remindee.id}>` + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`);
+      await interaction.reply(`This is a list of your upcoming reminders:\n\n${getReminderListInfo(reminderList)}`);
     }
   },
 };
