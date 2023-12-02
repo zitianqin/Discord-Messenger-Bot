@@ -48,6 +48,11 @@ module.exports = {
       option
         .setName('year')
         .setDescription('The year of the reminder')
+        .setRequired(false))
+    .addUserOption(option =>
+      option
+        .setName('remindee')
+        .setDescription('The person or role you want to remind. Leave blank if you only want to remind yourself.')
         .setRequired(false)),
 
   async execute(interaction) {
@@ -79,21 +84,29 @@ module.exports = {
 
     const reminderDateAndTime = new Date(year, month - 1, day, hour, minute);
     const unixReminderTime = Math.floor(reminderDateAndTime.getTime() / 1000);
-    
-    // Tell the user the date and time the bot will remind them at.
-    await interaction.reply(`${randomElement(okayArray)} ${interaction.user.toString()}, I will remind you to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`);
 
     // Insert data into the dataStore
     let data = getData();
     let reminders = data.reminders;
-    let newItem = {id: uid(), channel: interaction.channel, user: interaction.user.toString(), reminder: reminder, unixReminderTime: unixReminderTime};
+
+    let remindee;
+    if (interaction.options.getUser('remindee')) {
+      remindee = interaction.options.getUser('remindee');
+    } else {
+      remindee = interaction.user;
+    }
+
+    const newItem = {id: uid(), channel: interaction.channel, user: interaction.user, reminder: reminder, remindee: remindee, unixReminderTime: unixReminderTime};
     
     let index = 0;
     while (index < reminders.length && reminders[index].unixReminderTime < newItem.unixReminderTime) {
       index++;
     }
-    
+
     reminders.splice(index, 0, newItem);
     setData(data);
+
+    // Tell the user the date and time the bot will remind them at.
+    await interaction.reply(`${randomElement(okayArray)}, I will remind ${remindee} to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`);
   },
 };

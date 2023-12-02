@@ -30,10 +30,64 @@ for (const folder of commandFolders) {
   }
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////// Check the dataStore.js file every minute and send out outstanding reminders ////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// An async function that sends a message to the channel
+async function sendMessage(channelID, message) {
+  try {
+    const channel = await client.channels.fetch(channelID);
+    await channel.send(message);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Sends any outstanding reminders based on dataStore.js, which we assume to be ordered where the upcoming reminder is first
+// in the stored array.
+function sendReminders() {
+  let data = getData();
+  let currentDate = new Date();
+  let currentTime = Math.floor(currentDate.getTime() / 1000);
+
+  let numRemindersSent = 0;
+  let removed;
+  while (data.reminders.length > 0 && data.reminders[0].unixReminderTime <= currentTime) {
+    console.log(`Sending reminder with id ${data.reminders[0].id}`);
+
+    try {
+      sendMessage(data.reminders[0].channel.id, `<@${data.reminders[0].remindee.id}>, this is your reminder to ${data.reminders[0].reminder}!`);
+    } catch (error) {
+      console.error(error);
+    }
+
+    removed = data.reminders.splice(0, 1);
+    console.log(`Removed reminder with id ${removed[0].id}`);
+
+    numRemindersSent++;
+  }
+
+  console.log(`We sent out ${numRemindersSent} reminders in this loop on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
+  
+  setData(data);
+}
+
+
 // When the client is ready, run this code (only once)
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, c => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+  // Send the reminders out at the start of every minute.
+  const currentDate = new Date();
+  const currentSecond = currentDate.getSeconds() * 1000;
+  const currentMillisecond = currentDate.getMilliseconds();
+  const timeToWait = 60000 - (currentSecond + currentMillisecond);
+
+  sendReminders();
+
+  setTimeout(setInterval, timeToWait, sendReminders, 60000);
 });
 
 // Log in to Discord with your client's token
@@ -65,55 +119,3 @@ client.on(Events.InteractionCreate, async interaction => {
     }
   }
 });
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////// Check the dataStore.js file every minute and send out outstanding reminders ////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// An async function that sends a message to the channel
-async function sendMessage(channelID, message) {
-  try {
-    const channel = await client.channels.fetch(channelID);
-    await channel.send(message);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Sends any outstanding reminders based on dataStore.js, which we assume to be ordered where the upcoming reminder is first
-// in the stored array.
-function sendReminders() {
-  let data = getData();
-  let currentDate = new Date();
-  let currentTime = Math.floor(currentDate.getTime() / 1000);
-
-  let numRemindersSent = 0;
-  let removed;
-  while (data.reminders.length > 0 && data.reminders[0].unixReminderTime <= currentTime) {
-    console.log(`Sending reminder with id ${data.reminders[numRemindersSent].id}`);
-
-    try {
-      sendMessage(data.reminders[0].channel.id, `${data.reminders[numRemindersSent].user}, this is your reminder to ${data.reminders[numRemindersSent].reminder}!`);
-    } catch (error) {
-      console.error(error);
-    }
-
-    removed = data.reminders.splice(0, 1);
-    console.log(`Removed reminder with id ${removed[0].id}`);
-
-    numRemindersSent++;
-  }
-
-  console.log(`We sent out ${numRemindersSent} reminders in this loop on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
-  
-  setData(data);
-}
-
-// Send the reminders out at the start of every minute.
-const currentDate = new Date();
-const currentSecond = currentDate.getSeconds() * 1000;
-const currentMillisecond = currentDate.getMilliseconds();
-const timeToWait = 60000 - (currentSecond + currentMillisecond);
-
-setTimeout(setInterval, timeToWait, sendReminders, 60000);
