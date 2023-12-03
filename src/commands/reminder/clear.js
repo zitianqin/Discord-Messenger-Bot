@@ -21,9 +21,9 @@ module.exports = {
     setData({ reminders: reminders.filter(reminder => reminder.user.id !== userId) });
 
     if (removedReminders.length === 0) {
-      await interaction.reply(`You didn't have any reminders to delete!`);
+      await interaction.reply({content: `You didn't have any reminders to delete!`, ephemeral: true});
     } else {
-      await interaction.reply(`This is a list of your deleted reminders:\n\n${getReminderListInfo(removedReminders)}`);
+      await interaction.reply({content: `This is a list of your deleted reminders:\n\n${getReminderListInfo(removedReminders)}`, ephemeral: true});
     }
   },
 };

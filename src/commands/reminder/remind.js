@@ -78,10 +78,10 @@ module.exports = {
 
     // Check for invalid date and time inputs
     if (!isValidDateAndTime(year, month, day, hour, minute)) {
-      await interaction.reply('Please provide a valid date and time.');
+      await interaction.reply({content: 'Please provide a valid date and time.', ephemeral: true});
       return;
     } else if (unixReminderTime <= unixTime) {
-      await interaction.reply('Please provide a date and time in the future.');
+      await interaction.reply({content: 'Please provide a date and time in the future.', ephemeral: true});
       return;
     }
 
@@ -107,6 +107,6 @@ module.exports = {
     setData(data);
 
     // Tell the user the date and time the bot will remind them at.
-    await interaction.reply(`${randomElement(okayArray)}, I will remind ${remindee} to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`);
+    await interaction.reply({content: `${randomElement(okayArray)}, I will remind ${remindee} to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true});
   },
 };

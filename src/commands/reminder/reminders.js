@@ -19,9 +19,9 @@ module.exports = {
     }
 
     if (reminderList.length === 0) {
-      await interaction.reply(`You don't have any upcoming reminders!`);
+      await interaction.reply({content: `You don't have any upcoming reminders!`, ephemeral: true});
     } else {
-      await interaction.reply(`This is a list of your upcoming reminders:\n\n${getReminderListInfo(reminderList)}`);
+      await interaction.reply({content: `This is a list of your upcoming reminders:\n\n${getReminderListInfo(reminderList)}`,  ephemeral: true});
     }
   },
 };
