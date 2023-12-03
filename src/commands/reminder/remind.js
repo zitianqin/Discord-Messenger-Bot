@@ -40,10 +40,10 @@ module.exports = {
         .setName('year')
         .setDescription('The year of the reminder')
         .setRequired(false))
-    .addUserOption(option =>
+    .addStringOption(option =>
       option
-        .setName('remindee')
-        .setDescription('The person or role you want to remind. Leave blank if you only want to remind yourself.')
+        .setName('remindees')
+        .setDescription('Tag who you want to remind. You can leave this blank if you only want to remind yourself.')
         .setRequired(false)),
 
   async execute(interaction) {
@@ -92,14 +92,14 @@ module.exports = {
     let data = getData();
     let reminders = data.reminders;
 
-    let remindee;
-    if (interaction.options.getUser('remindee')) {
-      remindee = interaction.options.getUser('remindee');
+    let remindees;
+    if (interaction.options.getString('remindees')) {
+      remindees = interaction.options.getString('remindees');
     } else {
-      remindee = interaction.user;
+      remindees = interaction.user;
     }
 
-    const newItem = {id: uid(), channel: interaction.channel, user: interaction.user, reminder: reminder, remindee: remindee, unixReminderTime: unixReminderTime};
+    const newItem = {id: uid(), channel: interaction.channel, user: interaction.user, reminder: reminder, remindees: remindees, unixReminderTime: unixReminderTime};
     
     let index = 0;
     while (index < reminders.length && reminders[index].unixReminderTime < newItem.unixReminderTime) {
@@ -110,6 +110,6 @@ module.exports = {
     setData(data);
 
     // Tell the user the date and time the bot will remind them at.
-    await interaction.reply({content: `${randomElement(okayArray)}, I will remind ${remindee} to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true});
+    await interaction.reply({content: `${randomElement(okayArray)}, I will remind ${remindees} to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true});
   },
 };
