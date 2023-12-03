@@ -85,6 +85,7 @@ module.exports = {
       return;
     } else if (reminder.length > 220) {
       await interaction.reply({content: 'Your reminder cannot be more than 220 characters long.', ephemeral: true});
+      return;
     }
 
     // Insert data into the dataStore
