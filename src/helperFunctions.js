@@ -28,7 +28,7 @@ async function sendReminders(client) {
     console.log(`Sending reminder with id ${data.reminders[0].id}`);
 
     try {
-      await sendMessage(client, data.reminders[0].channel.id, `${userIdToMentionable(data.reminders[0].remindee.id)}, this is your reminder to ${data.reminders[0].reminder}!\nThis reminder was set by ${data.reminders[0].user.username}.`);
+      await sendMessage(client, data.reminders[0].channel.id, `${data.reminders[0].remindees}, this is your reminder to ${data.reminders[0].reminder}!\nThis reminder was set by ${data.reminders[0].user.username}.`);
     } catch (error) {
       console.error(error);
     }
@@ -60,7 +60,7 @@ function reminderToChannelLink(reminder) {
 
 // Returns a string containining all the information that is to be displayed to the user about a list of reminders.
 function getReminderListInfo(reminderList) {
-  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + userIdToMentionable(reminder.remindee.id) + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`;
+  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + reminder.remindees + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`;
 }
 
 function isValidTime(hour, minute) {
