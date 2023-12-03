@@ -46,8 +46,7 @@ async function sendReminders(client) {
 
 // A function that takes an array as an argument and returns a random element within the array.
 function randomElement(array) {
-  var randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
+  return array[Math.floor(Math.random() * array.length)];
 }
 
 // Generates a unique id.
@@ -55,15 +54,21 @@ function uid() {
   return Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36);
 }
 
+function reminderToChannelLink(reminder) {
+  return `https://discord.com/channels/${reminder.channel.guildId}/${reminder.channel.id}`;
+}
+
 // Returns a string containining all the information that is to be displayed to the user about a list of reminders.
 function getReminderListInfo(reminderList) {
-  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + userIdToMentionable(reminder.remindee.id) + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`
+  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + userIdToMentionable(reminder.remindee.id) + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`;
 }
 
 module.exports = {
   sendMessage,
+  userIdToMentionable,
   sendReminders,
   randomElement,
   uid,
+  reminderToChannelLink,
   getReminderListInfo
 }
