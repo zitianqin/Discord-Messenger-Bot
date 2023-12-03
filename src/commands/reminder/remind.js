@@ -83,6 +83,8 @@ module.exports = {
     } else if (unixReminderTime <= unixTime) {
       await interaction.reply({content: 'Please provide a date and time in the future.', ephemeral: true});
       return;
+    } else if (reminder.length > 220) {
+      await interaction.reply({content: 'Your reminder cannot be more than 220 characters long.', ephemeral: true});
     }
 
     // Insert data into the dataStore
