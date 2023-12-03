@@ -63,6 +63,15 @@ function getReminderListInfo(reminderList) {
   return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + userIdToMentionable(reminder.remindee.id) + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`;
 }
 
+function isValidTime(hour, minute) {
+  return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
+}
+
+function isValidDateAndTime(year, month, day, hour, minute) {
+  const date = new Date(year, month - 1, day, hour, minute);
+  return isValidTime(hour, minute) && !isNaN(date.getTime()) && date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
 module.exports = {
   sendMessage,
   userIdToMentionable,
@@ -70,5 +79,7 @@ module.exports = {
   randomElement,
   uid,
   reminderToChannelLink,
-  getReminderListInfo
+  getReminderListInfo,
+  isValidTime,
+  isValidDateAndTime
 }

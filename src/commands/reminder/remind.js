@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { getData, setData } = require('../../dataStore.js');
-const { randomElement, uid } = require('../../helperFunctions.js');
+const { randomElement, uid, isValidDateAndTime } = require('../../helperFunctions.js');
 
 // Arrays for randomising and creating variation within the messages.
 const okayArray = ['Okey dokey', 'Aye aye, captain', 'Sure thing', 'Absofruitly', 'okie'];
@@ -75,6 +75,15 @@ module.exports = {
 
     const reminderDateAndTime = new Date(year, month - 1, day, hour, minute);
     const unixReminderTime = Math.floor(reminderDateAndTime.getTime() / 1000);
+
+    // Check for invalid date and time inputs
+    if (!isValidDateAndTime(year, month, day, hour, minute)) {
+      await interaction.reply('Please provide a valid date and time.');
+      return;
+    } else if (unixReminderTime <= unixTime) {
+      await interaction.reply('Please provide a date and time in the future.');
+      return;
+    }
 
     // Insert data into the dataStore
     let data = getData();

@@ -47,7 +47,7 @@ client.once(Events.ClientReady, c => {
 
   sendReminders(client);
 
-  setTimeout(setInterval, timeToWait, sendReminders, 60000);
+  setTimeout(setInterval, timeToWait, () => sendReminders(client), 60000);
 });
 
 // Log in to Discord with your client's token
