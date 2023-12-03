@@ -28,7 +28,7 @@ async function sendReminders(client) {
     console.log(`Sending reminder with id ${data.reminders[0].id}`);
 
     try {
-      await sendMessage(client, data.reminders[0].channel.id, `${userIdToMentionable(data.reminders[0].remindee.id)}, this is your reminder to ${data.reminders[0].reminder}!`);
+      await sendMessage(client, data.reminders[0].channel.id, `${userIdToMentionable(data.reminders[0].remindee.id)}, this is your reminder to ${data.reminders[0].reminder}!\nThis reminder was set by ${data.reminders[0].user.username}.`);
     } catch (error) {
       console.error(error);
     }
