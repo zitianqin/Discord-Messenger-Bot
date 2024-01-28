@@ -33,6 +33,6 @@ module.exports = {
 
     setData({ reminders: reminders.filter(reminder => reminder.id !== reminderId) });
 
-    await interaction.reply({content: `Successfully deleted the scheduled message with the ID \`${reminderId}\`!\n\n##Original message:\n${originalMessage}`, ephemeral: true});
+    await interaction.reply({content: `Successfully deleted the scheduled message with the ID \`${reminderId}\`!\n\n## Original message:\n${originalMessage}`, ephemeral: true});
   },
 };
