@@ -60,7 +60,7 @@ function reminderToChannelLink(reminder) {
 
 // Returns a string containing all the information that is to be displayed to the user about a list of reminders.
 function getReminderListInfo(reminderList) {
-  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`;
+  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Message:** ' + reminder.reminder).join('\n\n')}`;
 }
 
 function isValidTime(hour, minute) {

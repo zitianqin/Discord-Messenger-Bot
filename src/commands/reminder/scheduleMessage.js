@@ -98,6 +98,6 @@ module.exports = {
     setData(data);
 
     // Tell the user the date and time the bot will remind them at.
-    await interaction.reply({content: `${randomElement(okayArray)}, I will send the message ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true});
+    await interaction.reply({content: `${randomElement(okayArray)}, I will send "${reminder}" on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true});
   },
 };
