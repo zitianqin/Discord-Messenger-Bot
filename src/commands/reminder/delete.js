@@ -8,19 +8,19 @@ module.exports = {
     .setDescription('Deletes one of the user\'s scheduled messages.')
     .addStringOption(option =>
       option
-        .setName('messageID')
+        .setName('messageid')
         .setDescription('The ID of the scheduled message you want to delete')
         .setRequired(true)),
 
   async execute(interaction) {
     const reminders = getData().reminders;
     const userId = interaction.user.id;
-    const reminderId = interaction.options.getString('messageID');
+    const reminderId = interaction.options.getString('messageid');
 
     const reminder = reminders.find(reminder => reminder.id === reminderId);
 
     if (reminder === undefined) {
-      await interaction.reply({content: `Invalid messageID!`, ephemeral: true});
+      await interaction.reply({content: `Invalid ID!`, ephemeral: true});
       return;
     }
 
