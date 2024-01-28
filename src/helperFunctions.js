@@ -17,7 +17,7 @@ function userIdToMentionable(userId) {
 
 // Sends any outstanding reminders based on dataStore.js, which we assume to be ordered where the upcoming reminder is first
 // in the stored array.
-async function sendReminders(client) {
+async function sendScheduledMessages(client) {
   let data = getData();
   let currentDate = new Date();
   let currentTime = Math.floor(currentDate.getTime() / 1000);
@@ -25,21 +25,21 @@ async function sendReminders(client) {
   let numRemindersSent = 0;
   let removed;
   while (data.reminders.length > 0 && data.reminders[0].unixReminderTime <= currentTime) {
-    console.log(`Sending reminder with id ${data.reminders[0].id}`);
+    console.log(`Sending the scheduled message with id ${data.reminders[0].id}`);
 
     try {
-      await sendMessage(client, data.reminders[0].channel.id, `${data.reminders[0].remindees}, this is your reminder to ${data.reminders[0].reminder}!\nThis reminder was set by ${data.reminders[0].user.username}.`);
+      await sendMessage(client, data.reminders[0].channel.id, `${data.reminders[0].reminder}\n\nThis message was scheduled by ${userIdToMentionable(data.reminders[0].user.id)}.`);
     } catch (error) {
       console.error(error);
     }
 
     removed = data.reminders.splice(0, 1);
-    console.log(`Removed reminder with id ${removed[0].id}`);
+    console.log(`Removed the scheduled message with id ${removed[0].id}`);
 
     numRemindersSent++;
   }
 
-  console.log(`We sent out ${numRemindersSent} reminders in this loop on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
+  console.log(`We sent out ${numRemindersSent} scheduled messages in this loop on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
   
   setData(data);
 }
@@ -58,9 +58,9 @@ function reminderToChannelLink(reminder) {
   return `https://discord.com/channels/${reminder.channel.guildId}/${reminder.channel.id}`;
 }
 
-// Returns a string containining all the information that is to be displayed to the user about a list of reminders.
+// Returns a string containing all the information that is to be displayed to the user about a list of reminders.
 function getReminderListInfo(reminderList) {
-  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Remindee(s):** ' + reminder.remindees + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Reminder:** ' + reminder.reminder).join('\n\n')}`;
+  return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Message:** ' + reminder.reminder).join('\n\n')}`;
 }
 
 function isValidTime(hour, minute) {
@@ -75,7 +75,7 @@ function isValidDateAndTime(year, month, day, hour, minute) {
 module.exports = {
   sendMessage,
   userIdToMentionable,
-  sendReminders,
+  sendScheduledMessages,
   randomElement,
   uid,
   reminderToChannelLink,
