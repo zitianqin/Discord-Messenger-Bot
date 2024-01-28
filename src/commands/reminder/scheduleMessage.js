@@ -9,36 +9,36 @@ const endingArray = ['!', ' :D'];
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('remind')
-    .setDescription('Sets a reminder for the user.')
+    .setDescription('Schedules a message for the user.')
     .addStringOption(option =>
       option
-        .setName('reminder')
-        .setDescription('The thing you want to be reminded about')
+        .setName('message')
+        .setDescription('The message you want to send')
         .setRequired(true))
     .addIntegerOption(option =>
       option
         .setName('hour')
-        .setDescription('The hour of the day of the reminder')
+        .setDescription('The hour of the day to send the message')
         .setRequired(true))
     .addIntegerOption(option =>
       option
         .setName('minute')
-        .setDescription('The minute of hour of the day of the reminder')
+        .setDescription('The minute of the hour of the day to send the message')
         .setRequired(true))
     .addIntegerOption(option =>
       option
         .setName('day')
-        .setDescription('The day of the reminder')
+        .setDescription('The day to send the message')
         .setRequired(true))
     .addIntegerOption(option =>
       option
         .setName('month')
-        .setDescription('The month of the reminder')
+        .setDescription('The month to send the message')
         .setRequired(true))
     .addIntegerOption(option =>
       option
         .setName('year')
-        .setDescription('The year of the reminder')
+        .setDescription('The year to send the message')
         .setRequired(false)),
 
   async execute(interaction) {
@@ -46,7 +46,7 @@ module.exports = {
     const minute = interaction.options.getInteger('minute');
     const day = interaction.options.getInteger('day');
     const month = interaction.options.getInteger('month');
-    const reminder = interaction.options.getString('reminder');
+    const reminder = interaction.options.getString('message');
 
     const date = new Date();
     const unixTime = Math.floor(date.getTime() / 1000);
@@ -79,7 +79,7 @@ module.exports = {
       await interaction.reply({content: 'Please provide a date and time in the future.', ephemeral: true});
       return;
     } else if (reminder.length > 220) {
-      await interaction.reply({content: 'Your reminder cannot be more than 220 characters long.', ephemeral: true});
+      await interaction.reply({content: 'Your message cannot be more than 220 characters long.', ephemeral: true});
       return;
     }
 
