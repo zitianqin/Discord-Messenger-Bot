@@ -39,11 +39,6 @@ module.exports = {
       option
         .setName('year')
         .setDescription('The year of the reminder')
-        .setRequired(false))
-    .addStringOption(option =>
-      option
-        .setName('remindees')
-        .setDescription('Tag who you want to remind. You can leave this blank if you only want to remind yourself.')
         .setRequired(false)),
 
   async execute(interaction) {
@@ -92,14 +87,7 @@ module.exports = {
     let data = getData();
     let reminders = data.reminders;
 
-    let remindees;
-    if (interaction.options.getString('remindees')) {
-      remindees = interaction.options.getString('remindees');
-    } else {
-      remindees = interaction.user;
-    }
-
-    const newItem = {id: uid(), channel: interaction.channel, user: interaction.user, reminder: reminder, remindees: remindees, unixReminderTime: unixReminderTime};
+    const newItem = {id: uid(), channel: interaction.channel, user: interaction.user, reminder: reminder, unixReminderTime: unixReminderTime};
     
     let index = 0;
     while (index < reminders.length && reminders[index].unixReminderTime < newItem.unixReminderTime) {
@@ -110,6 +98,6 @@ module.exports = {
     setData(data);
 
     // Tell the user the date and time the bot will remind them at.
-    await interaction.reply({content: `${randomElement(okayArray)}, I will remind ${remindees} to ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true});
+    await interaction.reply({content: `${randomElement(okayArray)}, I will send the message ${reminder} on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true});
   },
 };
