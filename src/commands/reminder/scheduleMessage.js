@@ -8,7 +8,7 @@ const endingArray = ['!', ' :D'];
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('remind')
+    .setName('message')
     .setDescription('Schedules a message for the user.')
     .addStringOption(option =>
       option

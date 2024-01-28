@@ -4,7 +4,7 @@ const { getReminderListInfo } = require('../../helperFunctions.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('reminders')
+    .setName('messages')
     .setDescription('Gets a list of all the user\'s scheduled messages.'),
 
   async execute(interaction) {
