@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
-const { sendReminders } = require('./helperFunctions.js');
+const { sendScheduledMessages } = require('./helperFunctions.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -45,9 +45,9 @@ client.once(Events.ClientReady, c => {
   const currentMillisecond = currentDate.getMilliseconds();
   const timeToWait = 60000 - (currentSecond + currentMillisecond);
 
-  sendReminders(client);
+  sendScheduledMessages(client);
 
-  setTimeout(setInterval, timeToWait, () => sendReminders(client), 60000);
+  setTimeout(setInterval, timeToWait, () => sendScheduledMessages(client), 60000);
 });
 
 // Log in to Discord with your client's token

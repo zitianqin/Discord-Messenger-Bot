@@ -17,7 +17,7 @@ function userIdToMentionable(userId) {
 
 // Sends any outstanding reminders based on dataStore.js, which we assume to be ordered where the upcoming reminder is first
 // in the stored array.
-async function sendReminders(client) {
+async function sendScheduledMessages(client) {
   let data = getData();
   let currentDate = new Date();
   let currentTime = Math.floor(currentDate.getTime() / 1000);
@@ -25,7 +25,7 @@ async function sendReminders(client) {
   let numRemindersSent = 0;
   let removed;
   while (data.reminders.length > 0 && data.reminders[0].unixReminderTime <= currentTime) {
-    console.log(`Sending reminder with id ${data.reminders[0].id}`);
+    console.log(`Sending the scheduled message with id ${data.reminders[0].id}`);
 
     try {
       await sendMessage(client, data.reminders[0].channel.id, `${data.reminders[0].reminder}\n\nThis message was scheduled by ${userIdToMentionable(data.reminders[0].user.id)}.`);
@@ -34,12 +34,12 @@ async function sendReminders(client) {
     }
 
     removed = data.reminders.splice(0, 1);
-    console.log(`Removed reminder with id ${removed[0].id}`);
+    console.log(`Removed the scheduled message with id ${removed[0].id}`);
 
     numRemindersSent++;
   }
 
-  console.log(`We sent out ${numRemindersSent} reminders in this loop on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
+  console.log(`We sent out ${numRemindersSent} scheduled messages in this loop on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
   
   setData(data);
 }
@@ -75,7 +75,7 @@ function isValidDateAndTime(year, month, day, hour, minute) {
 module.exports = {
   sendMessage,
   userIdToMentionable,
-  sendReminders,
+  sendScheduledMessages,
   randomElement,
   uid,
   reminderToChannelLink,
