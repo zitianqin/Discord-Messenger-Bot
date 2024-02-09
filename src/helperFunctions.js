@@ -5,8 +5,7 @@ async function sendMessage(client, channelID, message) {
 	try {
 		const channel = await client.channels.fetch(channelID);
 		await channel.send(message);
-	}
-	catch (error) {
+	} catch (error) {
 		console.error(error);
 	}
 }
@@ -30,8 +29,7 @@ async function sendScheduledMessages(client) {
 
 		try {
 			await sendMessage(client, data.reminders[0].channel.id, `${data.reminders[0].reminder}\n\nThis message was scheduled by ${userIdToMentionable(data.reminders[0].user.id)}.`);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error(error);
 		}
 
@@ -65,6 +63,33 @@ function getReminderListInfo(reminderList) {
 	return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Message:** ' + reminder.reminder).join('\n\n')}`;
 }
 
+// Returns a string containing all the information that is to be displayed to the user about a scheduledMessage.
+function getScheduledMessageInfo(message) {
+	return '**ID:** ' + message.id + '\n**Date and Time:** ' + new Date(message.unixReminderTime * 1000).toDateString() + ' at ' + new Date(message.unixReminderTime * 1000).toTimeString() + '\n**Channel: **' + reminderToChannelLink(message) + '\n\n**Message:**\n' + message.reminder;
+}
+
+// Deletes a scheduled message with the given messageId if the user with the given userId is the owner of the message and sends a reply to the interaction.
+function deleteScheduledMessage(messageId, userId, interaction) {
+	const messages = getData().reminders;
+	const message = messages.find(r => r.id === messageId);
+
+	if (message === undefined) {
+		interaction.reply({ content: 'Invalid ID!', ephemeral: true });
+		return;
+	}
+
+	if (message.user.id !== userId) {
+		interaction.reply({ content: `You are not the owner of the scheduled message with the ID \`${messageId}\`!`, ephemeral: true });
+		return;
+	}
+
+	const originalMessage = message.reminder;
+
+	setData({ reminders: messages.filter(r => r.id !== messageId) });
+
+	interaction.reply({ content: `Successfully deleted the scheduled message with the ID \`${messageId}\`!\n\n## Original message:\n${originalMessage}`, ephemeral: true });
+}
+
 function isValidTime(hour, minute) {
 	return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
 }
@@ -82,6 +107,8 @@ module.exports = {
 	uid,
 	reminderToChannelLink,
 	getReminderListInfo,
+	getScheduledMessageInfo,
+	deleteScheduledMessage,
 	isValidTime,
 	isValidDateAndTime,
 };
