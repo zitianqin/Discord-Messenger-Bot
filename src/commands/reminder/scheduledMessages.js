@@ -54,7 +54,7 @@ module.exports = {
 
 		const helpButton = new ButtonBuilder()
 			.setLabel('Help')
-			.setURL('https://zitian.me/')
+			.setURL('https://zitian.me/discord-message-scheduler-bot/help')
 			.setStyle(ButtonStyle.Link);
 
 		let messageIndex = 0;
