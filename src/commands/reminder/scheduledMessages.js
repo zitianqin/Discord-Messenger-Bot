@@ -27,15 +27,9 @@ module.exports = {
 
 	async execute(interaction) {
 		// Obtain array of user's scheduled messages
-		const reminders = getData().reminders;
+		const messages = getData().reminders;
 		const userId = interaction.user.id;
-		const messageList = [];
-
-		for (const reminder of reminders) {
-			if (reminder.user.id === userId) {
-				messageList.push(reminder);
-			}
-		}
+		const messageList = messages.filter(message => message.user.id === userId);
 
 		// Create response
 		const editButton = new ButtonBuilder()
@@ -69,6 +63,7 @@ module.exports = {
 			components: [makeRow(messageList, helpButton, editButton, deleteButton, previousButton, nextButton)],
 			ephemeral: true,
 		});
+		let originalMessage;
 
 		// Manage user interactions with the buttons
 		const collector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
@@ -78,24 +73,28 @@ module.exports = {
 				await i.reply({ content: 'We haven\'t implemented the edit functionality yet!', ephemeral: true });
 
 			} else if (i.customId === 'delete') {
-				deleteScheduledMessage(messageList[messageIndex].id, userId, i);
+				originalMessage = messageList[messageIndex];
+				deleteScheduledMessage(originalMessage.id, userId, i);
+				messageList.splice(messageIndex, 1);
 				if (messageIndex > 0) {
 					messageIndex--;
 				}
+				await i.reply({ content: `Successfully deleted the following message:\n${originalMessage.reminder}`, ephemeral: true });
 
 			} else if (i.customId === 'previous') {
 				if (messageIndex > 0) {
 					messageIndex--;
 				}
+				await i.deferUpdate();
 
 			} else if (i.customId === 'next') {
 				if (messageIndex < messageList.length - 1) {
 					messageIndex++;
 				}
+				await i.deferUpdate();
 			}
 
 			// Acknowledge the button interaction and edit the response.
-			await i.deferUpdate();
 			response.edit({
 				content: getScheduledMessagesListContent(messageList, messageIndex),
 				components: [makeRow(messageList, helpButton, editButton, deleteButton, previousButton, nextButton)],

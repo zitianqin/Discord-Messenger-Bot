@@ -1,3 +1,4 @@
+/* eslint-disable brace-style */
 const { getData, setData } = require('./dataStore.js');
 
 // An async function that sends a message to the channel
@@ -44,11 +45,6 @@ async function sendScheduledMessages(client) {
 	setData(data);
 }
 
-// A function that takes an array as an argument and returns a random element within the array.
-function randomElement(array) {
-	return array[Math.floor(Math.random() * array.length)];
-}
-
 // Generates a unique id.
 function uid() {
 	return Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9 * Math.pow(10, 12)).toString(36);
@@ -65,29 +61,13 @@ function getReminderListInfo(reminderList) {
 
 // Returns a string containing all the information that is to be displayed to the user about a scheduledMessage.
 function getScheduledMessageInfo(message) {
-	return '**ID:** ' + message.id + '\n**Date and Time:** ' + new Date(message.unixReminderTime * 1000).toDateString() + ' at ' + new Date(message.unixReminderTime * 1000).toTimeString() + '\n**Channel: **' + reminderToChannelLink(message) + '\n\n**Message:**\n' + message.reminder;
+	return '**Date** ' + new Date(message.unixReminderTime * 1000).toDateString() + '\n**Time:** ' + new Date(message.unixReminderTime * 1000).toTimeString() + '\n**Channel: **' + reminderToChannelLink(message) + '\n\n**Message:**\n' + message.reminder;
 }
 
 // Deletes a scheduled message with the given messageId if the user with the given userId is the owner of the message and sends a reply to the interaction.
-function deleteScheduledMessage(messageId, userId, interaction) {
+function deleteScheduledMessage(messageId) {
 	const messages = getData().reminders;
-	const message = messages.find(r => r.id === messageId);
-
-	if (message === undefined) {
-		interaction.reply({ content: 'Invalid ID!', ephemeral: true });
-		return;
-	}
-
-	if (message.user.id !== userId) {
-		interaction.reply({ content: `You are not the owner of the scheduled message with the ID \`${messageId}\`!`, ephemeral: true });
-		return;
-	}
-
-	const originalMessage = message.reminder;
-
 	setData({ reminders: messages.filter(r => r.id !== messageId) });
-
-	interaction.reply({ content: `Successfully deleted the scheduled message with the ID \`${messageId}\`!\n\n## Original message:\n${originalMessage}`, ephemeral: true });
 }
 
 function isValidTime(hour, minute) {
@@ -103,7 +83,6 @@ module.exports = {
 	sendMessage,
 	userIdToMentionable,
 	sendScheduledMessages,
-	randomElement,
 	uid,
 	reminderToChannelLink,
 	getReminderListInfo,

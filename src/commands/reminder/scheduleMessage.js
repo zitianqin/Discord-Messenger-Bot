@@ -1,11 +1,7 @@
 /* eslint-disable brace-style */
 const { SlashCommandBuilder } = require('discord.js');
 const { getData, setData } = require('../../dataStore.js');
-const { randomElement, uid, isValidDateAndTime } = require('../../helperFunctions.js');
-
-// Arrays for randomising and creating variation within the messages.
-const okayArray = ['Okey dokey', 'Aye aye, captain', 'Sure thing', 'Absofruitly', 'okie'];
-const endingArray = ['!', ' :D'];
+const { uid, isValidDateAndTime } = require('../../helperFunctions.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -58,8 +54,7 @@ module.exports = {
 		if (interaction.options.getInteger('year')) {
 			year = interaction.options.getInteger('year');
 
-		}
-		else {
+		} else {
 			const givenDate = new Date(date.getFullYear(), month - 1, day, hour, minute);
 			const unixGivenTime = Math.floor(givenDate.getTime() / 1000);
 
@@ -80,8 +75,8 @@ module.exports = {
 		} else if (unixReminderTime <= unixTime) {
 			await interaction.reply({ content: 'Please provide a date and time in the future.', ephemeral: true });
 			return;
-		} else if (reminder.length > 220) {
-			await interaction.reply({ content: 'Your message cannot be more than 220 characters long.', ephemeral: true });
+		} else if (reminder.length > 1700) {
+			await interaction.reply({ content: 'Your message cannot be more than 1700 characters long.', ephemeral: true });
 			return;
 		}
 
@@ -100,6 +95,6 @@ module.exports = {
 		setData(data);
 
 		// Tell the user the date and time the bot will remind them at.
-		await interaction.reply({ content: `${randomElement(okayArray)}, I will send "${reminder}" on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}${randomElement(endingArray)}`, ephemeral: true });
+		await interaction.reply({ content: `I will send the following message on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}:\n${reminder}`, ephemeral: true });
 	},
 };
