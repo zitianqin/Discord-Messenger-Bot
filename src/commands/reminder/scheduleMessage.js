@@ -48,7 +48,8 @@ module.exports = {
 		const minute = interaction.options.getInteger('minute');
 		const day = interaction.options.getInteger('day');
 		const month = interaction.options.getInteger('month');
-		const reminder = interaction.options.getString('message');
+		// Replace all the newline characters with the actual newline character.
+		const reminder = interaction.options.getString('message').replace(/\\n/g, '\n');
 		const anonymous = interaction.options.getBoolean('anonymous') || false;
 
 		const date = new Date();
