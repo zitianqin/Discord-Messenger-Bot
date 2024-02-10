@@ -102,6 +102,6 @@ module.exports = {
 		setData(data);
 
 		// Tell the user the date and time the bot will remind them at.
-		await interaction.reply({ content: `I will send the following message on ${reminderDateAndTime.toDateString()} in this channel at ${reminderDateAndTime.toTimeString()}:\n${reminder}`, ephemeral: true });
+		await interaction.reply({ content: `I will send the following message on ${reminderDateAndTime.toDateString()} in this channel at ${reminderDateAndTime.toTimeString()}.\n\n${reminder}`, ephemeral: true });
 	},
 };
