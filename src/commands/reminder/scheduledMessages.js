@@ -11,7 +11,7 @@ function getScheduledMessagesListContent(messageList, messageIndex) {
 	return 'You don\'t have any scheduled messages. You can schedule one with the `/schedule` command!';
 }
 
-// Returns an ActionRowBuilder object that contains the buttons for the user to interact with.
+// Returns an ActionRowBuilder object that contains the buttons for the user to interact with when using the /message command.
 function makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton) {
 	if (messageList.length === 0) {
 		return new ActionRowBuilder().addComponents(helpButton);

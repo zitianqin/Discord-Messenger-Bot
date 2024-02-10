@@ -54,11 +54,6 @@ function reminderToChannelLink(reminder) {
 	return `https://discord.com/channels/${reminder.channel.guildId}/${reminder.channel.id}`;
 }
 
-// Returns a string containing all the information that is to be displayed to the user about a list of reminders.
-function getReminderListInfo(reminderList) {
-	return `${reminderList.map(reminder => '**ID:** ' + reminder.id + '\n**Date and Time:** ' + new Date(reminder.unixReminderTime * 1000).toDateString() + ' at ' + new Date(reminder.unixReminderTime * 1000).toTimeString() + '\n**Channel:** ' + reminderToChannelLink(reminder) + '\n**Message:** ' + reminder.reminder).join('\n\n')}`;
-}
-
 // Returns a string containing all the information that is to be displayed to the user about a scheduledMessage.
 function getScheduledMessageInfo(message) {
 	return '**Date** ' + new Date(message.unixReminderTime * 1000).toDateString() + '\n**Time:** ' + new Date(message.unixReminderTime * 1000).toTimeString() + '\n**Channel: **' + reminderToChannelLink(message) + '\n\n**Message:**\n' + message.reminder;
@@ -85,7 +80,6 @@ module.exports = {
 	sendScheduledMessages,
 	uid,
 	reminderToChannelLink,
-	getReminderListInfo,
 	getScheduledMessageInfo,
 	deleteScheduledMessage,
 	isValidTime,
