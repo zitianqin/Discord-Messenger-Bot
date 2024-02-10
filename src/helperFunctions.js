@@ -63,7 +63,11 @@ function reminderToChannelLink(reminder) {
 
 // Returns a string containing all the information that is to be displayed to the user about a scheduledMessage.
 function getScheduledMessageInfo(message) {
-	return '**Date** ' + new Date(message.unixReminderTime * 1000).toDateString() + '\n**Time:** ' + new Date(message.unixReminderTime * 1000).toTimeString() + '\n**Channel: **' + reminderToChannelLink(message) + '\n\n**Message:**\n' + message.reminder;
+	return '**Date** ' + new Date(message.unixReminderTime * 1000).toDateString() +
+	'\n**Time:** ' + new Date(message.unixReminderTime * 1000).toTimeString() +
+	'\n**Channel: **' + reminderToChannelLink(message) +
+	'\n**Anonymous: **' + message.anonymous +
+	'\n\n**Message:**\n' + message.reminder;
 }
 
 // Deletes a scheduled message with the given messageId if the user with the given userId is the owner of the message and sends a reply to the interaction.
