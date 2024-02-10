@@ -12,10 +12,23 @@ function getScheduledMessagesListContent(messageList, messageIndex) {
 }
 
 // Returns an ActionRowBuilder object that contains the buttons for the user to interact with.
-function makeRow(messageList, helpButton, editButton, deleteButton, previousButton, nextButton) {
+function makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton) {
 	if (messageList.length === 0) {
 		return new ActionRowBuilder().addComponents(helpButton);
 	}
+
+	if (messageIndex === 0) {
+		previousButton.setDisabled(true);
+	} else {
+		previousButton.setDisabled(false);
+	}
+
+	if (messageIndex === messageList.length - 1) {
+		nextButton.setDisabled(true);
+	} else {
+		nextButton.setDisabled(false);
+	}
+
 	return new ActionRowBuilder()
 		.addComponents(editButton, deleteButton, previousButton, nextButton, helpButton);
 }
@@ -60,7 +73,7 @@ module.exports = {
 		let messageIndex = 0;
 		const response = await interaction.reply({
 			content: getScheduledMessagesListContent(messageList, messageIndex),
-			components: [makeRow(messageList, helpButton, editButton, deleteButton, previousButton, nextButton)],
+			components: [makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton)],
 			ephemeral: true,
 		});
 		let originalMessage;
@@ -97,7 +110,7 @@ module.exports = {
 			// Acknowledge the button interaction and edit the response.
 			response.edit({
 				content: getScheduledMessagesListContent(messageList, messageIndex),
-				components: [makeRow(messageList, helpButton, editButton, deleteButton, previousButton, nextButton)],
+				components: [makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton)],
 				ephemeral: true,
 			});
 		});
