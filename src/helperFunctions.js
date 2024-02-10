@@ -27,9 +27,16 @@ async function sendScheduledMessages(client) {
 	let removed;
 	while (data.reminders.length > 0 && data.reminders[0].unixReminderTime <= currentTime) {
 		console.log(`Sending the scheduled message with id ${data.reminders[0].id}`);
+		let message;
+
+		if (data.reminders[0].anonymous) {
+			message = data.reminders[0].reminder;
+		} else {
+			message = `${data.reminders[0].reminder}\n\nThis message was scheduled by ${userIdToMentionable(data.reminders[0].user.id)}.`;
+		}
 
 		try {
-			await sendMessage(client, data.reminders[0].channel.id, `${data.reminders[0].reminder}\n\nThis message was scheduled by ${userIdToMentionable(data.reminders[0].user.id)}.`);
+			await sendMessage(client, data.reminders[0].channel.id, message);
 		} catch (error) {
 			console.error(error);
 		}

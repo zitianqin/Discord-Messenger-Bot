@@ -15,12 +15,12 @@ module.exports = {
 		.addIntegerOption(option =>
 			option
 				.setName('hour')
-				.setDescription('The hour of the day to send the message')
+				.setDescription('The hour of the day to send the message (24-hour format - 0 to 23)')
 				.setRequired(true))
 		.addIntegerOption(option =>
 			option
 				.setName('minute')
-				.setDescription('The minute of the hour of the day to send the message')
+				.setDescription('The minute of the hour to send the message (24-hour format - 0 to 59)')
 				.setRequired(true))
 		.addIntegerOption(option =>
 			option
@@ -36,6 +36,11 @@ module.exports = {
 			option
 				.setName('year')
 				.setDescription('The year to send the message')
+				.setRequired(false))
+		.addBooleanOption(option =>
+			option
+				.setName('anonymous')
+				.setDescription('Send message anonymously. (Default: false)')
 				.setRequired(false)),
 
 	async execute(interaction) {
@@ -44,6 +49,7 @@ module.exports = {
 		const day = interaction.options.getInteger('day');
 		const month = interaction.options.getInteger('month');
 		const reminder = interaction.options.getString('message');
+		const anonymous = interaction.options.getBoolean('anonymous') || false;
 
 		const date = new Date();
 		const unixTime = Math.floor(date.getTime() / 1000);
@@ -84,10 +90,11 @@ module.exports = {
 		const data = getData();
 		const reminders = data.reminders;
 
-		const newItem = { id: uid(), channel: interaction.channel, user: interaction.user, reminder: reminder, unixReminderTime: unixReminderTime };
+		const newItem = { id: uid(), channel: interaction.channel, user: interaction.user, reminder: reminder, unixReminderTime: unixReminderTime, anonymous: anonymous };
 
+		// Insert the new message into the array in the position after all previous messages that are scheduled to be sent before or at the same time as the new message.
 		let index = 0;
-		while (index < reminders.length && reminders[index].unixReminderTime < newItem.unixReminderTime) {
+		while (index < reminders.length && reminders[index].unixReminderTime <= newItem.unixReminderTime) {
 			index++;
 		}
 
@@ -95,6 +102,6 @@ module.exports = {
 		setData(data);
 
 		// Tell the user the date and time the bot will remind them at.
-		await interaction.reply({ content: `I will send the following message on ${reminderDateAndTime.toDateString()} at ${reminderDateAndTime.toTimeString()}:\n${reminder}`, ephemeral: true });
+		await interaction.reply({ content: `I will send the following message on ${reminderDateAndTime.toDateString()} in this channel at ${reminderDateAndTime.toTimeString()}:\n${reminder}`, ephemeral: true });
 	},
 };
