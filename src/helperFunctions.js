@@ -13,6 +13,7 @@ async function sendMessage(client, channelID, message) {
 
 // Converts a user's or role's id (as a string) to a mentionable (as a string).
 function userIdToMentionable(userId) {
+	// TODO: Add a client parameter to use discord.js's own userid to mentionable method
 	return `<@${userId}>`;
 }
 
@@ -23,32 +24,38 @@ async function sendScheduledMessages(client) {
 	const currentDate = new Date();
 	const currentTime = Math.floor(currentDate.getTime() / 1000);
 
-	let numRemindersSent = 0;
-	let removed;
-	while (data.reminders.length > 0 && data.reminders[0].unixReminderTime <= currentTime) {
-		console.log(`Sending the scheduled message with id ${data.reminders[0].id}`);
-		let message;
+	const remindersToSend = [];
+	for (const reminder of data.reminders) {
+		if (reminder.unixReminderTime <= currentTime) {
+			remindersToSend.push(reminder);
+		}
+	}
 
-		if (data.reminders[0].anonymous) {
-			message = data.reminders[0].reminder;
-		} else {
-			message = `${data.reminders[0].reminder}\n\nThis message was scheduled by ${userIdToMentionable(data.reminders[0].user.id)}.`;
+	for (const reminder of remindersToSend) {
+		console.log(`Sending the scheduled message with id ${reminder.id}`);
+		let message = reminder.reminder;
+
+		if (!reminder.anonymous) {
+			message += `\n\nThis message was scheduled by ${userIdToMentionable(reminder.user.id)}.`;
 		}
 
 		try {
-			await sendMessage(client, data.reminders[0].channel.id, message);
+			await sendMessage(client, reminder.channel.id, message);
 		} catch (error) {
 			console.error(error);
 		}
 
-		removed = data.reminders.splice(0, 1);
-		console.log(`Removed the scheduled message with id ${removed[0].id}`);
-
-		numRemindersSent++;
+		for (const attachement of reminder.attachments) {
+			try {
+				await sendMessage(client, reminder.channel.id, attachement);
+			} catch (error) {
+				console.error(error);
+			}
+		}
 	}
 
-	console.log(`We sent out ${numRemindersSent} scheduled messages in this loop on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
-
+	data.reminders.splice(0, remindersToSend.length);
+	console.log(`We sent out ${remindersToSend.length} scheduled messages on ${currentDate.toDateString()} at ${currentDate.toTimeString()}.\n`);
 	setData(data);
 }
 

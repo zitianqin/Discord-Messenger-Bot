@@ -48,11 +48,10 @@ client.once(Events.ClientReady, c => {
 	const timeToWait = 60000 - (currentSecond + currentMillisecond);
 
 	sendScheduledMessages(client);
-
 	setTimeout(setInterval, timeToWait, () => sendScheduledMessages(client), 60000);
 });
 
-// Log in to Discord with your client's token
+// Log in to Discord with client's token
 client.login(token);
 
 
