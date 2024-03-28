@@ -91,6 +91,8 @@ module.exports = {
 		} else if (reminder.length + (attachmentsOption?.length || 0) > 1700) {
 			await interaction.reply({ content: 'Your total message length, including attachments, cannot be more than 1700 characters long.', ephemeral: true });
 			return;
+		} else if (attachments.length > 10) {
+			await interaction.reply({ content: 'You can only attach up to 10 links.', ephemeral: true });
 		}
 
 		// Insert data into the dataStore

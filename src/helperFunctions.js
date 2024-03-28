@@ -74,7 +74,8 @@ function getScheduledMessageInfo(message) {
 	'\n**Time:** ' + new Date(message.unixReminderTime * 1000).toTimeString() +
 	'\n**Channel: **' + reminderToChannelLink(message) +
 	'\n**Anonymous: **' + message.anonymous +
-	'\n\n**Message:**\n' + message.reminder;
+	'\n\n**Message:**\n' + message.reminder +
+	'\n**Attachments:**\n' + message.attachments.join('\n');
 }
 
 // Deletes a scheduled message with the given messageId if the user with the given userId is the owner of the message and sends a reply to the interaction.
