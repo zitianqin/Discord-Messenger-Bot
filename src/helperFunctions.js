@@ -1,11 +1,12 @@
 /* eslint-disable brace-style */
 const { getData, setData } = require('./dataStore.js');
+const { EmbedBuilder } = require('discord.js');
 
 // An async function that sends a message to the channel
-async function sendMessage(client, channelID, message) {
+async function sendMessage(client, channelID, message, attachments = [], embeds = []) {
 	try {
 		const channel = await client.channels.fetch(channelID);
-		await channel.send(message);
+		await channel.send({ content: message, files: attachments, embeds: embeds });
 	} catch (error) {
 		console.error(error);
 	}
@@ -33,21 +34,19 @@ async function sendScheduledMessages(client) {
 
 	for (const reminder of remindersToSend) {
 		console.log(`Sending the scheduled message with id ${reminder.id}`);
-		let message = reminder.reminder;
 
 		if (!reminder.anonymous) {
-			message += `\n\nThis message was scheduled by ${userIdToMentionable(reminder.user.id)}.`;
-		}
-
-		try {
-			await sendMessage(client, reminder.channel.id, message);
-		} catch (error) {
-			console.error(error);
-		}
-
-		for (const attachement of reminder.attachments) {
+			const msg_author_embed = new EmbedBuilder()
+				.setColor(0x0099FF)
+				.setDescription(`This message was scheduled by ${userIdToMentionable(reminder.user.id)}.`);
 			try {
-				await sendMessage(client, reminder.channel.id, attachement);
+				await sendMessage(client, reminder.channel.id, reminder.reminder, reminder.attachments, [msg_author_embed]);
+			} catch (error) {
+				console.error(error);
+			}
+		} else {
+			try {
+				await sendMessage(client, reminder.channel.id, reminder.reminder, reminder.attachments);
 			} catch (error) {
 				console.error(error);
 			}
@@ -68,14 +67,18 @@ function reminderToChannelLink(reminder) {
 	return `https://discord.com/channels/${reminder.channel.guildId}/${reminder.channel.id}`;
 }
 
+// Adds ** before and after a string to make it bold when sent on discord.
+function bold(str) {
+	return `**${str}**`;
+}
+
 // Returns a string containing all the information that is to be displayed to the user about a scheduledMessage.
 function getScheduledMessageInfo(message) {
-	return '**Date** ' + new Date(message.unixReminderTime * 1000).toDateString() +
-	'\n**Time:** ' + new Date(message.unixReminderTime * 1000).toTimeString() +
-	'\n**Channel: **' + reminderToChannelLink(message) +
-	'\n**Anonymous: **' + message.anonymous +
-	'\n\n**Message:**\n' + message.reminder +
-	'\n**Attachments:**\n' + message.attachments.join('\n');
+	return bold('Date: ') + new Date(message.unixReminderTime * 1000).toDateString() +
+	'\n' + bold('Time: ') + new Date(message.unixReminderTime * 1000).toTimeString() +
+	'\n' + bold('Channel: ') + reminderToChannelLink(message) +
+	'\n' + bold('Anonymous: ') + message.anonymous +
+	'\n\n' + bold('Message:') + '\n' + message.reminder;
 }
 
 // Deletes a scheduled message with the given messageId if the user with the given userId is the owner of the message and sends a reply to the interaction.
@@ -93,14 +96,25 @@ function isValidDateAndTime(year, month, day, hour, minute) {
 	return isValidTime(hour, minute) && !isNaN(date.getTime()) && date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 }
 
+function isValidUrl(string) {
+	try {
+		new URL(string);
+		return true;
+	} catch (_) {
+		return false;
+	}
+}
+
 module.exports = {
 	sendMessage,
 	userIdToMentionable,
 	sendScheduledMessages,
 	uid,
 	reminderToChannelLink,
+	bold,
 	getScheduledMessageInfo,
 	deleteScheduledMessage,
 	isValidTime,
 	isValidDateAndTime,
+	isValidUrl,
 };
