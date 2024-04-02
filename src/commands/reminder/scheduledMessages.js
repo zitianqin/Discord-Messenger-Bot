@@ -1,5 +1,5 @@
 /* eslint-disable brace-style */
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, ComponentType } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, ComponentType, EmbedBuilder } = require('discord.js');
 const { getData } = require('../../dataStore.js');
 const { getScheduledMessageInfo, deleteScheduledMessage } = require('../../helperFunctions.js');
 
@@ -71,9 +71,13 @@ module.exports = {
 			.setStyle(ButtonStyle.Link);
 
 		let messageIndex = 0;
+		const messageInfoEmbed = new EmbedBuilder()
+			.setColor(0x0099FF)
+			.setDescription(getScheduledMessagesListContent(messageList, messageIndex));
 		const response = await interaction.reply({
-			content: getScheduledMessagesListContent(messageList, messageIndex),
+			embeds: [ messageInfoEmbed ],
 			components: [makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton)],
+			files: messageList[messageIndex].attachments,
 			ephemeral: true,
 		});
 		let originalMessage;
@@ -108,9 +112,14 @@ module.exports = {
 			}
 
 			// Acknowledge the button interaction and edit the response.
+			messageInfoEmbed
+				.setColor(0x0099FF)
+				.setDescription(getScheduledMessagesListContent(messageList, messageIndex));
+
 			response.edit({
-				content: getScheduledMessagesListContent(messageList, messageIndex),
+				embeds: [ messageInfoEmbed ],
 				components: [makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton)],
+				files: messageList[messageIndex].attachments,
 				ephemeral: true,
 			});
 		});
