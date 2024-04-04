@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder } = require('discord.js');
 const { getData, setData } = require('../../dataStore.js');
-const { uid, isValidDateAndTime, isValidUrl } = require('../../helperFunctions.js');
+const { uid, isValidDateAndTime, isValidUrl } = require('../../utils.js');
 const { helpButton } = require('../../buttons.js');
 
 module.exports = {
