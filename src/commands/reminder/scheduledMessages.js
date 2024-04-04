@@ -1,9 +1,14 @@
-/* eslint-disable brace-style */
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, ComponentType, EmbedBuilder } = require('discord.js');
+const { ActionRowBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder } = require('discord.js');
 const { getData } = require('../../dataStore.js');
 const { getScheduledMessageInfo, deleteScheduledMessage } = require('../../helperFunctions.js');
+const { editButton, deleteButton, previousButton, nextButton, helpButton } = require('../../buttons.js');
 
-// Returns a string containing all the information that is to be displayed to the user about a scheduled message.
+/**
+ * Returns a string containing all the information that is to be displayed to the user about a scheduled message.
+ * @param {Array} messageList - The list of messages.
+ * @param {number} messageIndex - The index of the current message.
+ * @returns {string} - The message to be displayed to the user.
+ */
 function getScheduledMessagesListContent(messageList, messageIndex) {
 	if (messageList.length > 0) {
 		return `Currently showing message ${messageIndex + 1} of ${messageList.length}.\n\n` + getScheduledMessageInfo(messageList[messageIndex]);
@@ -11,8 +16,13 @@ function getScheduledMessagesListContent(messageList, messageIndex) {
 	return 'You don\'t have any scheduled messages. You can schedule one with the `/schedule` command!';
 }
 
-// Returns an ActionRowBuilder object that contains the buttons for the user to interact with when using the /message command.
-function makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton) {
+/**
+ * Returns an ActionRowBuilder object that contains the buttons for the user to interact with when using the /message command.
+ * @param {Array} messageList - The list of messages.
+ * @param {number} messageIndex - The index of the current message.
+ * @returns {ActionRowBuilder} - The ActionRowBuilder object with the buttons.
+ */
+function makeRow(messageList, messageIndex) {
 	if (messageList.length === 0) {
 		return new ActionRowBuilder().addComponents(helpButton);
 	}
@@ -38,6 +48,10 @@ module.exports = {
 		.setName('messages')
 		.setDescription('Gets a list of all the user\'s scheduled messages.'),
 
+	/**
+	 * The main function that gets a list of all the user's scheduled messages and handles the interactions.
+	 * @param {Interaction} interaction - The interaction object from discord.js.
+	 */
 	async execute(interaction) {
 		// Obtain array of user's scheduled messages
 		const messages = getData().reminders;
@@ -45,31 +59,6 @@ module.exports = {
 		const messageList = messages.filter(message => message.user.id === userId);
 
 		// Create response
-		const editButton = new ButtonBuilder()
-			.setCustomId('edit')
-			.setLabel('Edit')
-			.setStyle(ButtonStyle.Primary);
-
-		const deleteButton = new ButtonBuilder()
-			.setCustomId('delete')
-			.setLabel('Delete')
-			.setStyle(ButtonStyle.Danger);
-
-		const previousButton = new ButtonBuilder()
-			.setCustomId('previous')
-			.setLabel('Previous')
-			.setStyle(ButtonStyle.Secondary);
-
-		const nextButton = new ButtonBuilder()
-			.setCustomId('next')
-			.setLabel('Next')
-			.setStyle(ButtonStyle.Secondary);
-
-		const helpButton = new ButtonBuilder()
-			.setLabel('Help')
-			.setURL('https://zitian.me/discord-message-scheduler-bot/help')
-			.setStyle(ButtonStyle.Link);
-
 		let messageIndex = 0;
 		const messageInfoEmbed = new EmbedBuilder()
 			.setColor(0x0099FF)
@@ -93,10 +82,13 @@ module.exports = {
 				originalMessage = messageList[messageIndex];
 				deleteScheduledMessage(originalMessage.id, userId, i);
 				messageList.splice(messageIndex, 1);
+
 				if (messageIndex > 0) {
 					messageIndex--;
 				}
-				await i.reply({ content: `Successfully deleted the following message:\n${originalMessage.reminder}`, ephemeral: true });
+
+				messageInfoEmbed.setDescription(`Successfully deleted the following message:\n\n${originalMessage.reminder}`);
+				await i.reply({ embeds: [messageInfoEmbed], ephemeral: true });
 
 			} else if (i.customId === 'previous') {
 				if (messageIndex > 0) {
@@ -112,10 +104,7 @@ module.exports = {
 			}
 
 			// Acknowledge the button interaction and edit the response.
-			messageInfoEmbed
-				.setColor(0x0099FF)
-				.setDescription(getScheduledMessagesListContent(messageList, messageIndex));
-
+			messageInfoEmbed.setDescription(getScheduledMessagesListContent(messageList, messageIndex));
 			response.edit({
 				embeds: [ messageInfoEmbed ],
 				components: [makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton)],
