@@ -1,7 +1,7 @@
-/* eslint-disable brace-style */
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder } = require('discord.js');
 const { getData, setData } = require('../../dataStore.js');
 const { uid, isValidDateAndTime, isValidUrl } = require('../../helperFunctions.js');
+const { helpButton } = require('../../buttons.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -48,6 +48,16 @@ module.exports = {
 				.setDescription('Send message anonymously. (Default: false)')
 				.setRequired(false)),
 
+	/**
+	 * Asynchronously schedules a message based on the provided interaction.
+	 *
+	 * This function extracts the scheduling details (hour, minute, day, month, year) and the message details (message text, attachments, anonymity) from the interaction.
+	 * It then validates these details and, if valid, schedules the message for the specified time.
+	 * If the details are not valid, it sends an appropriate error message back to the user.
+	 *
+	 * @param {Interaction} interaction - The interaction that triggered the command. It should contain the scheduling and message details.
+	 * @returns {Promise<void>} - A Promise that resolves when the scheduling of the message has been completed or an error message has been sent.
+	 */
 	async execute(interaction) {
 		const hour = interaction.options.getInteger('hour');
 		const minute = interaction.options.getInteger('minute');
@@ -81,21 +91,24 @@ module.exports = {
 		const reminderDateAndTime = new Date(year, month - 1, day, hour, minute);
 		const unixReminderTime = Math.floor(reminderDateAndTime.getTime() / 1000);
 
+		// Create a new ActionRowBuilder instance and add the helpButton to it
+		const helpButtonRow = new ActionRowBuilder().addComponents(helpButton);
+
 		// Check for invalid date and time inputs
 		if (!isValidDateAndTime(year, month, day, hour, minute)) {
-			await interaction.reply({ content: 'Please provide a valid date and time.', ephemeral: true });
+			await interaction.reply({ content: 'Please provide a valid date and time.', components: [helpButtonRow], ephemeral: true });
 			return;
 		} else if (unixReminderTime <= unixTime) {
-			await interaction.reply({ content: 'Please provide a date and time in the future.', ephemeral: true });
+			await interaction.reply({ content: 'Please provide a date and time in the future.', components: [helpButtonRow], ephemeral: true });
 			return;
 		} else if (reminder.length > 1800) {
-			await interaction.reply({ content: 'Your total message length cannot be more than 1800 characters long.', ephemeral: true });
+			await interaction.reply({ content: 'Your total message length cannot be more than 1800 characters long.', components: [helpButtonRow], ephemeral: true });
 			return;
 		} else if (attachments.length > 10) {
-			await interaction.reply({ content: 'You can only attach up to 10 links.', ephemeral: true });
+			await interaction.reply({ content: 'You can only attach up to 10 links.', components: [helpButtonRow], ephemeral: true });
 			return;
 		} else if (!attachments.every(isValidUrl)) {
-			await interaction.reply({ content: 'Please provide valid URLs for attachments.', ephemeral: true });
+			await interaction.reply({ content: 'Please provide valid URLs for attachments.\n\nURLs must begin with `http://` or `https://`.', components: [helpButtonRow], ephemeral: true });
 			return;
 		}
 
@@ -113,9 +126,12 @@ module.exports = {
 		reminders.splice(index, 0, newItem);
 		setData(data);
 
-		const msg_author_embed = new EmbedBuilder()
-			.setColor(0x0099FF)
-			.setDescription(`I will send the following message on ${reminderDateAndTime.toDateString()} in this channel at ${reminderDateAndTime.toTimeString()}:\n\n${reminder}\n\nThis message was scheduled by ${interaction.user}.`);
+		const msg_author_embed = new EmbedBuilder().setColor(0x0099FF);
+		if (anonymous) {
+			msg_author_embed.setDescription(`I will send the following message on ${reminderDateAndTime.toDateString()} in this channel at ${reminderDateAndTime.toTimeString()}:\n\n${reminder}`);
+		} else {
+			msg_author_embed.setDescription(`I will send the following message on ${reminderDateAndTime.toDateString()} in this channel at ${reminderDateAndTime.toTimeString()}:\n\n${reminder}\n\nThis message was scheduled by ${interaction.user}.`);
+		}
 		await interaction.reply({ files: attachments, embeds: [msg_author_embed], ephemeral: true });
 	},
 };

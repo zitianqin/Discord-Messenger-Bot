@@ -1,5 +1,3 @@
-/* eslint-disable brace-style */
-/* eslint-disable spaced-comment */
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
@@ -8,11 +6,7 @@ const { sendScheduledMessages } = require('./helperFunctions.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////// Read in commands (all commands must be in a subfolder within the commands folder) ////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Read in commands from the 'commands' directory. All commands must be in a subfolder within the commands folder.
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -32,13 +26,7 @@ for (const folder of commandFolders) {
 	}
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////// Check the dataStore.js file every minute and send out outstanding reminders ////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// When the client is ready, run this code (only once)
-// We use 'c' for the event parameter to keep it separate from the already defined 'client'
+// Check the dataStore.js file every minute and send out outstanding reminders.
 client.once(Events.ClientReady, c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
 	// Send the reminders out at the start of every minute.
@@ -51,14 +39,7 @@ client.once(Events.ClientReady, c => {
 	setTimeout(setInterval, timeToWait, () => sendScheduledMessages(client), 60000);
 });
 
-// Log in to Discord with client's token
-client.login(token);
-
-
-///////////////////////////////////////////////////////////////////////////////
-//////////// Receiving Command Interactions and Executing Commands ////////////
-///////////////////////////////////////////////////////////////////////////////
-
+// When a command interaction is created, find the corresponding command and execute it.
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 
@@ -75,3 +56,5 @@ client.on(Events.InteractionCreate, async interaction => {
 		console.error(error);
 	}
 });
+
+client.login(token);
