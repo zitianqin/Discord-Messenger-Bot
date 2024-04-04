@@ -1,6 +1,6 @@
 const { ActionRowBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder } = require('discord.js');
 const { getData } = require('../../dataStore.js');
-const { getScheduledMessageInfo, deleteScheduledMessage } = require('../../helperFunctions.js');
+const { getScheduledMessageInfo, deleteScheduledMessage } = require('../../utils.js');
 const { editButton, deleteButton, previousButton, nextButton, helpButton } = require('../../buttons.js');
 
 /**
