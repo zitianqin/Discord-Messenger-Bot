@@ -54,6 +54,7 @@ async function sendScheduledMessages(client) {
 			} catch (error) {
 				console.error(error);
 			}
+
 		} else {
 			try {
 				await sendMessage(client, reminder.channel.id, reminder.reminder, reminder.attachments);
