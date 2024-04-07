@@ -1,5 +1,6 @@
 const { ButtonBuilder, ButtonStyle } = require('discord.js');
-const { helpGuideURL } = require('./constants.json');
+const path = require('node:path');
+const { helpGuideURL } = require(path.join(__dirname, 'constants.json'));
 
 const editButton = new ButtonBuilder()
 	.setCustomId('edit')
