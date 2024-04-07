@@ -63,20 +63,21 @@ module.exports = {
 		const messageInfoEmbed = new EmbedBuilder()
 			.setColor(0x0099FF)
 			.setDescription(getScheduledMessagesListContent(messageList, messageIndex));
+
 		const response = await interaction.reply({
 			embeds: [ messageInfoEmbed ],
 			components: [makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton)],
-			files: messageList[messageIndex].attachments,
+			files: messageList[messageIndex]?.attachments || [],
 			ephemeral: true,
 		});
-		let originalMessage;
 
 		// Manage user interactions with the buttons
 		const collector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
+		let originalMessage;
 
 		collector.on('collect', async i => {
 			if (i.customId === 'edit') {
-				await i.reply({ content: 'We haven\'t implemented the edit functionality yet!', ephemeral: true });
+				await i.reply({ content: 'Message editing coming soon!', ephemeral: true });
 
 			} else if (i.customId === 'delete') {
 				originalMessage = messageList[messageIndex];
@@ -105,10 +106,11 @@ module.exports = {
 
 			// Acknowledge the button interaction and edit the response.
 			messageInfoEmbed.setDescription(getScheduledMessagesListContent(messageList, messageIndex));
+
 			response.edit({
 				embeds: [ messageInfoEmbed ],
 				components: [makeRow(messageList, messageIndex, helpButton, editButton, deleteButton, previousButton, nextButton)],
-				files: messageList[messageIndex].attachments,
+				files: messageList[messageIndex]?.attachments || [],
 				ephemeral: true,
 			});
 		});
