@@ -1,4 +1,7 @@
 const fs = require('node:fs');
+const path = require('node:path');
+
+const dataStorePath = path.join(__dirname, 'dataStore.json');
 
 /**
  * Function to get data from the dataStore.json file.
@@ -7,8 +10,8 @@ const fs = require('node:fs');
  * @returns {Object} The parsed JSON data from the file, or an object with an empty reminders array if the file does not exist.
  */
 function getData() {
-	if (fs.existsSync('dataStore.json')) {
-		return JSON.parse(String(fs.readFileSync('dataStore.json')));
+	if (fs.existsSync(dataStorePath)) {
+		return JSON.parse(String(fs.readFileSync(dataStorePath)));
 	} else {
 		console.log('[WARNING] The dataStore.json file called by dataStore.js is missing.');
 	}
@@ -21,7 +24,7 @@ function getData() {
  * @param {Object} data - The data to write to the file.
  */
 function setData(data) {
-	fs.writeFileSync('dataStore.json', JSON.stringify(data, null, 2));
+	fs.writeFileSync(dataStorePath, JSON.stringify(data, null, 2));
 }
 
 module.exports = {
