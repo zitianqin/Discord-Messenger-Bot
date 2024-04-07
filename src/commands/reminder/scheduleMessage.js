@@ -1,7 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder } = require('discord.js');
-const { getData, setData } = require('../../dataStore.js');
-const { uid, isValidDateAndTime, isValidUrl } = require('../../utils.js');
-const { helpButton } = require('../../buttons.js');
+const path = require('node:path');
+const { getData, setData } = require(path.join(__dirname, '../../dataStore.js'));
+const { uid, isValidDateAndTime, isValidUrl } = require(path.join(__dirname, '../../utils.js'));
+const { helpButton } = require(path.join(__dirname, '../../buttons.js'));
 
 module.exports = {
 	data: new SlashCommandBuilder()
