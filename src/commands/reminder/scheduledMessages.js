@@ -1,7 +1,8 @@
 const { ActionRowBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder } = require('discord.js');
-const { getData } = require('../../dataStore.js');
-const { getScheduledMessageInfo, deleteScheduledMessage } = require('../../utils.js');
-const { editButton, deleteButton, previousButton, nextButton, helpButton } = require('../../buttons.js');
+const path = require('node:path');
+const { getData } = require(path.join(__dirname, '../../dataStore.js'));
+const { getScheduledMessageInfo, deleteScheduledMessage } = require(path.join(__dirname, '../../utils.js'));
+const { editButton, deleteButton, previousButton, nextButton, helpButton } = require(path.join(__dirname, '../../buttons.js'));
 
 /**
  * Returns a string containing all the information that is to be displayed to the user about a scheduled message.

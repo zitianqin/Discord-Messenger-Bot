@@ -1,4 +1,5 @@
-const { getData, setData } = require('./dataStore.js');
+const path = require('node:path');
+const { getData, setData } = require(path.join(__dirname, 'dataStore.js'));
 const { EmbedBuilder } = require('discord.js');
 
 /**
