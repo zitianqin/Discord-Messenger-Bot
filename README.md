@@ -43,6 +43,7 @@ This bot, while initially designed to meet the specific needs of the marketing t
 ### Future Developments
 There are several ways this Discord bot could be further developed in the future:
 
+- Time zone command options to account for differences in timezones.
 - Integration with other platforms, such as Google Calendar or Slack.
 - Advanced scheduling features, such as recurring reminders or event countdowns.
 - A web interface for easier scheduling and management of messages.
