@@ -47,7 +47,7 @@ There are several ways this Discord bot could be further developed in the future
 - Advanced scheduling features, such as recurring reminders or event countdowns.
 - A web interface for easier scheduling and management of messages.
 - Additional bot commands for more complex interactions.
-- An admin interface so that server owners can view all scheduled messages made by anyone in the server.
+- An admin interface so server admins can view all scheduled messages that are to be sent in the server.
 
 ## Rights
 All rights reserved. No part of this software may be reproduced, distributed, or transmitted in any form or by any means, without the prior written permission of the author.
