@@ -111,7 +111,7 @@ module.exports = {
 		} else if (!attachments.every(isValidUrl)) {
 			await interaction.reply({ content: 'Please provide valid URLs for attachments.\n\nURLs must begin with `http://` or `https://`.', components: [helpButtonRow], ephemeral: true });
 			return;
-		} else if (interaction.guildId == null) {
+		} else if (interaction.guildId == null || interaction.channel == null) {
 			await interaction.reply({ content: 'This command can only be used in a server channel that the bot can read and send messages in.', components: [helpButtonRow], ephemeral: true });
 		}
 

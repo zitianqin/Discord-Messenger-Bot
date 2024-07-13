@@ -46,10 +46,6 @@ async function sendScheduledMessages(client) {
 	}
 
 	for (const reminder of remindersToSend) {
-		if (!reminder.channel) {
-			continue;
-		}
-
 		if (!reminder.anonymous) {
 			const msg_author_embed = new EmbedBuilder()
 				.setColor(0x0099FF)
