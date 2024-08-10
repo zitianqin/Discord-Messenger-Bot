@@ -63,7 +63,7 @@ client.on(Events.InteractionCreate, async interaction => {
 			{ name: 'User ID', value: userId, inline: true },
 			{ name: 'Command', value: interaction.commandName, inline: true })
 		.setTimestamp()
-		.setFooter('Command Interaction');
+		.setFooter({ text: 'Command Interaction' });
 
 	await channel.send({ embeds: [embed] });
 
