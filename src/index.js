@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const { token } = require(path.join(__dirname, 'config.json'));
+const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { token, loggingChannel } = require(path.join(__dirname, 'config.json'));
 const { sendScheduledMessages } = require(path.join(__dirname, 'utils.js'));
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -50,6 +50,24 @@ client.on(Events.InteractionCreate, async interaction => {
 		return;
 	}
 
+	// Interaction Logging
+	const channel = client.channels.cache.get(loggingChannel);
+	const server = interaction.guild.name;
+	const user = interaction.user.username;
+	const userId = interaction.user.id;
+
+	const embed = new EmbedBuilder()
+		.setColor('Green').setTitle('Chat Command Used')
+		.addFields({ name: 'Server', value: server, inline: true },
+			{ name: 'User', value: user, inline: true },
+			{ name: 'User ID', value: userId, inline: true },
+			{ name: 'Command', value: interaction.commandName, inline: true })
+		.setTimestamp()
+		.setFooter('Command Interaction');
+
+	await channel.send({ embeds: [embed] });
+
+	// Execute Command
 	try {
 		await command.execute(interaction);
 	} catch (error) {
